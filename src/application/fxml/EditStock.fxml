@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.EditStockController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <TableView fx:id="iTable" prefHeight="375.0" prefWidth="600.0">
+               <columns>
+                  <TableColumn fx:id="iID" prefWidth="30.0" text="ID" />
+                  <TableColumn fx:id="iName" prefWidth="250.0" text="Name" />
+                  <TableColumn fx:id="iQuant" prefWidth="75.0" text="Quantity" />
+               </columns>
+            </TableView>
+            <HBox prefHeight="0.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#newItemButton" text="New Item" />
+                  <Button fx:id="editItemButton" mnemonicParsing="false" onAction="#editItemButton" text="Edit Item" />
+                  <Button mnemonicParsing="false" onAction="#cancelButton" text="Cancel" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

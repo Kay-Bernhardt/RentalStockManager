@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.ManagerController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#writeDB" text="Write Backup" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadFromFile" text="Load from Backup" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <HBox prefHeight="0.0" prefWidth="200.0">
+               <children>
+                  <DatePicker fx:id="datePicker" onAction="#selectDate" />
+                  <Button mnemonicParsing="false" onAction="#createOrder" text="New Order" />
+                  <Button fx:id="editButton" mnemonicParsing="false" onAction="#editOrder" text="Edit Order" />
+                  <Button mnemonicParsing="false" onAction="#editStock" text="Stock" />
+               </children>
+            </HBox>
+            <HBox prefHeight="343.0" prefWidth="600.0">
+               <children>
+                  <TableView fx:id="iTable" prefHeight="200.0">
+                    <columns>
+                      <TableColumn fx:id="iID" prefWidth="30.0" text="ID" />
+                      <TableColumn fx:id="iName" prefWidth="250.0" text="Name" />
+                        <TableColumn fx:id="iQuant" prefWidth="75.0" text="Quantity" />
+                    </columns>
+                  </TableView>
+                  <ListView fx:id="orderListView" prefHeight="200.0" prefWidth="200.0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

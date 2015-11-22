@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.EditOrderController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Label text="New Order">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label text="Name:" />
+                  <TextField fx:id="nameTextField" />
+                  <CheckBox fx:id="confirmedCheckBox" mnemonicParsing="false" text="Order Confirmed?">
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </CheckBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label text="Out Date">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <DatePicker fx:id="outDatePicker">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </DatePicker>
+                  <Label text="In Date">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <DatePicker fx:id="inDatePicker" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+            </HBox>
+            <TableView fx:id="iStockTable" prefHeight="200.0" prefWidth="200.0">
+               <columns>
+                  <TableColumn fx:id="stID" prefWidth="30.0" text="ID" />
+                  <TableColumn fx:id="stName" prefWidth="200.0" text="Name" />
+                  <TableColumn fx:id="stQuant" prefWidth="75.0" text="Quantity" />
+               </columns>
+            </TableView>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#addButton" text="Add to Order" />
+                  <TextField fx:id="addTextField" prefWidth="50.0" />
+                  <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeButton" text="Remove from Order" />
+                  <TextField fx:id="removeTextField" prefWidth="50.0" />
+               </children>
+            </HBox>
+            <TableView fx:id="iOrderTable" prefHeight="200.0" prefWidth="200.0">
+               <columns>
+                  <TableColumn fx:id="oID" prefWidth="30.0" text="ID" />
+                  <TableColumn fx:id="oName" prefWidth="200.0" text="Name" />
+                  <TableColumn fx:id="oQuant" prefWidth="75.0" text="Quantity" />
+               </columns>
+            </TableView>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#cancelButton" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#removeOrderButton" text="Remove Order" />
+                  <Button mnemonicParsing="false" onAction="#saveButton" text="Save" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>
