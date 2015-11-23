@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.ManagerController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.ManagerController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
@@ -29,12 +29,12 @@
                   <Button mnemonicParsing="false" onAction="#editStock" text="Stock" />
                </children>
             </HBox>
-            <HBox prefHeight="343.0" prefWidth="600.0">
+            <HBox prefHeight="440.0" prefWidth="600.0">
                <children>
-                  <TableView fx:id="iTable" prefHeight="200.0">
+                  <TableView fx:id="iTable" prefHeight="300.0" prefWidth="550.0">
                     <columns>
                       <TableColumn fx:id="iID" prefWidth="30.0" text="ID" />
-                      <TableColumn fx:id="iName" prefWidth="250.0" text="Name" />
+                      <TableColumn fx:id="iName" prefWidth="400.0" text="Name" />
                         <TableColumn fx:id="iQuant" prefWidth="75.0" text="Quantity" />
                     </columns>
                   </TableView>
