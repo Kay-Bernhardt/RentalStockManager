@@ -8,12 +8,14 @@ import model.containers.Item;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
 public class EditStockController implements Initializable
 {
@@ -44,6 +46,22 @@ public class EditStockController implements Initializable
 		iName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
 		
 		iTable.setItems(stockTableList);
+		
+		iTable.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle(MouseEvent click)
+			{
+				if (click.getClickCount() == 2)
+				{
+					// Use ListView's getSelected Item
+					Item currentItemSelected = iTable.getSelectionModel().getSelectedItem();
+					// use this to do whatever you want to.
+					ScreenNavigator.setUserData(currentItemSelected);
+					ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ITEM);
+				}
+			}
+		});
 	}
 	
 	@FXML
@@ -61,7 +79,7 @@ public class EditStockController implements Initializable
 	@FXML
     private void editItemButton(ActionEvent event) 
 	{
-		ScreenNavigator.setUserData(new Item(iTable.getSelectionModel().getSelectedItem()));
+		ScreenNavigator.setUserData(iTable.getSelectionModel().getSelectedItem());
         ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ITEM);
 	}
 }
