@@ -21,6 +21,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -30,6 +31,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
 public class ManagerController implements Initializable
 {
@@ -39,24 +41,23 @@ public class ManagerController implements Initializable
 	private Label greetingLabel;
 	@FXML
 	private Button editButton;
-	
-	//STOCK TABLE
+
+	// STOCK TABLE
 	@FXML
-	private TableView<Item> iTable;	
+	private TableView<Item> iTable;
 	@FXML
-	private TableColumn<Item, Integer> iID;	
+	private TableColumn<Item, Integer> iID;
 	@FXML
-	private TableColumn<Item, Integer> iQuant;	
+	private TableColumn<Item, Integer> iQuant;
 	@FXML
 	private TableColumn<Item, String> iName;
-	
+
 	@FXML
-	private ListView<Order> orderListView;
-	
-	private final ObservableList<Item> tableList = FXCollections.observableArrayList();
+	public ListView<Order> orderListView;
 	private ObservableList<Order> orderList = FXCollections.observableArrayList();
-	
-	
+
+	private final ObservableList<Item> tableList = FXCollections.observableArrayList();
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1)
 	{
@@ -65,34 +66,49 @@ public class ManagerController implements Initializable
 		editButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
 		showStock();
 		showOrders();
+
+		orderListView.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle(MouseEvent click)
+			{
+				if (click.getClickCount() == 2)
+				{
+					// Use ListView's getSelected Item
+					Order currentItemSelected = orderListView.getSelectionModel().getSelectedItem();
+					// use this to do whatever you want to.
+					ScreenNavigator.setUserData(currentItemSelected);
+					ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
+				}
+			}
+		});
 	}
-	
+
 	private void showStock()
 	{
 		ArrayList<Item> list = DBBroker.getInstance().getStockForDate(Main.date);
 		tableList.setAll(list);
-		
+
 		iID.setCellValueFactory(new PropertyValueFactory<Item, Integer>("id"));
 		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
 		iName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-		
+
 		iTable.setItems(tableList);
 	}
-	
+
 	private void showOrders()
 	{
-		//TODO
-		//get orders for date
+		// get orders for date
 		ArrayList<Order> temp = DBBroker.getInstance().getOrdersForDate(Main.date);
 		orderList.setAll(temp);
 
-		//add orders to list
+		// add orders to list
 		if (orderList.size() > 0)
 		{
 			orderListView.setItems(orderList);
 		}
 	}
-	
+
 	public void selectDate(ActionEvent event)
 	{
 		LocalDate ld = datePicker.getValue();
@@ -100,59 +116,56 @@ public class ManagerController implements Initializable
 		showStock();
 		showOrders();
 	}
-	
-	public void doExit()
+
+	/**
+	 * Event handler fired when the user requests a new screen.
+	 *
+	 * @param event
+	 *           the event that triggered the handler.
+	 */
+	@FXML
+	private void createOrder(ActionEvent event)
 	{
-		Platform.exit();
+		ScreenNavigator.loadScreen(ScreenNavigator.CREATE_ORDER);
 	}
-	
-    /**
-     * Event handler fired when the user requests a new screen.
-     *
-     * @param event the event that triggered the handler.
-     */
-    @FXML
-    private void createOrder(ActionEvent event) 
-    {
-        ScreenNavigator.loadScreen(ScreenNavigator.CREATE_ORDER);
-    }
-    
-    @FXML
-    private void editOrder(ActionEvent even) 
-    {
-    	ScreenNavigator.setUserData(new Order(orderListView.getSelectionModel().getSelectedItem()));
-    	ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
-    }
-    
-    @FXML
-    private void editStock(ActionEvent event) 
-    {
-        ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
-    }
-    
-    @FXML
-    private void writeDB(ActionEvent event)
-    {
-    	//make 3 lists
-    	//write all lists to different files
-    	ArrayList<Order> oList = DBBroker.getInstance().getAllOrders();
-    	ArrayList<Item> iList = DBBroker.getInstance().getAllItems();
-    	ArrayList<OrderItem> oiList = DBBroker.getInstance().getAllOrderItems();
-    	
+
+	@FXML
+	private void editOrder(ActionEvent even)
+	{
+		//TODO does it have to be a new order
+		ScreenNavigator.setUserData(orderListView.getSelectionModel().getSelectedItem());
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
+	}
+
+	@FXML
+	private void editStock(ActionEvent event)
+	{
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
+	}
+
+	@FXML
+	private void writeDB(ActionEvent event)
+	{
+		// make 3 lists
+		// write all lists to different files
+		ArrayList<Order> oList = DBBroker.getInstance().getAllOrders();
+		ArrayList<Item> iList = DBBroker.getInstance().getAllItems();
+		ArrayList<OrderItem> oiList = DBBroker.getInstance().getAllOrderItems();
+
 		try
 		{
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("res/orders.ser"));
 			out.writeObject(oList);
 			out.close();
-			
+
 			out = new ObjectOutputStream(new FileOutputStream("res/items.ser"));
 			out.writeObject(iList);
 			out.close();
-			
+
 			out = new ObjectOutputStream(new FileOutputStream("res/orderitems.ser"));
 			out.writeObject(oiList);
 			out.close();
-			
+
 		} catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
@@ -161,12 +174,12 @@ public class ManagerController implements Initializable
 			e.printStackTrace();
 		}
 		System.out.println("writeDB done");
-    }
-    
-    @SuppressWarnings("unchecked")
+	}
+
+	@SuppressWarnings("unchecked")
 	@FXML
-    private void loadFromFile(ActionEvent event)
-    {
+	private void loadFromFile(ActionEvent event)
+	{
 		ArrayList<Item> iList = new ArrayList<Item>();
 		ArrayList<OrderItem> oiList = new ArrayList<OrderItem>();
 		ArrayList<Order> oList = new ArrayList<Order>();
@@ -177,19 +190,19 @@ public class ManagerController implements Initializable
 				ObjectInputStream in = new ObjectInputStream(new FileInputStream("res/orders.ser"));
 				oList = (ArrayList<Order>) in.readObject();
 				in.close();
-				
+
 				in = new ObjectInputStream(new FileInputStream("res/items.ser"));
 				iList = (ArrayList<Item>) in.readObject();
 				in.close();
-				
+
 				in = new ObjectInputStream(new FileInputStream("res/orderitems.ser"));
-				oiList = (ArrayList<OrderItem>) in.readObject();				
+				oiList = (ArrayList<OrderItem>) in.readObject();
 				in.close();
 
-			}catch (ClassNotFoundException e)
+			} catch (ClassNotFoundException e)
 			{
 				e.printStackTrace();
-			}catch (FileNotFoundException e)
+			} catch (FileNotFoundException e)
 			{
 				e.printStackTrace();
 			} catch (IOException e)
@@ -197,28 +210,29 @@ public class ManagerController implements Initializable
 				e.printStackTrace();
 			}
 		}
-		
-		if(iList != null && oList != null && oiList != null)
+
+		if (iList != null && oList != null && oiList != null)
 		{
-			for(int i = 0; i < iList.size(); i++)
+			for (int i = 0; i < iList.size(); i++)
 			{
-				DBBroker.getInstance().addItem(new Item(iList.get(i).getId(), iList.get(i).getQuantity(), iList.get(i).getName()));
+				DBBroker.getInstance()
+						.addItem(new Item(iList.get(i).getId(), iList.get(i).getQuantity(), iList.get(i).getName()));
 			}
-			
-			for(int i = 0; i < oList.size(); i++)
+
+			for (int i = 0; i < oList.size(); i++)
 			{
 				DBBroker.getInstance().addOrder(oList.get(i));
 			}
-			
-			for(int i = 0; i < oiList.size(); i++)
+
+			for (int i = 0; i < oiList.size(); i++)
 			{
 				DBBroker.getInstance().addOrderItem(oiList.get(i));
 			}
 		}
 		System.out.println("loading done");
 		ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-    }
-    
+	}
+
 	private boolean fileExists(String file)
 	{
 		File f = new File(file);
