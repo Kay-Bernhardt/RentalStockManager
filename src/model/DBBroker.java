@@ -24,6 +24,7 @@ public class DBBroker
 	private Connection conn = null;
 	private static DBBroker instance = null;
 	
+	//TODO make 3 brokers for saving loading removing
 	protected DBBroker()
 	{
 		System.out.println("dbbroker constructor");
@@ -84,57 +85,9 @@ public class DBBroker
            }  
         }
 	}
-
-	public ArrayList<Item> getAllItems()
-	{
-		ArrayList<Item> itemList = new ArrayList<Item>();
-		try
-		{
-			Statement s = conn.createStatement();
-			ResultSet rs = s.executeQuery("SELECT * FROM ITEM");
-			
-			while(rs.next()) 
-			{
-				Item item = new Item(rs.getInt("item_id"),rs.getInt("total_quant"), rs.getString("item_name"));
-				itemList.add(item);
-			}
-			s.close();
-			rs.close();
-			
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		Utility.sortById(itemList);
-		return itemList;
-	}
-
-	public ArrayList<OrderItem> getAllOrderItems()
-	{
-		ArrayList<OrderItem> itemList = new ArrayList<OrderItem>();					
-			try
-			{				
-				Statement s = conn.createStatement();
-				ResultSet rs = s.executeQuery("SELECT * FROM ORDERITEM");
-				
-				while(rs.next()) 
-				{
-					OrderItem orderItem = new OrderItem(rs.getInt("item_id"),rs.getInt("order_id"), rs.getInt("quant"));
-					itemList.add(orderItem);
-				}
-				rs.close();
-				s.close();
-			} catch (SQLException e)
-			{
-				e.printStackTrace();
-			}	
-		return itemList;
-	}
-/*
-	public Item getItem(int id)
-	{		
-	}
-*/	
+	
+	//===========  Add methods ==============================
+	
 	public void addItem(Item item)
 	{
 		try
@@ -180,6 +133,72 @@ public class DBBroker
 		return order_id;
 	}
 
+	public void addOrderItem(OrderItem oi)
+	{		
+		PreparedStatement ps;
+		try
+		{
+			ps = conn.prepareStatement("INSERT INTO ORDERITEM(item_id, order_id, quant)VALUES(?, ?, ?)");
+			ps.setInt(1, oi.getItemId());
+			ps.setInt(2, oi.getOrderId());
+			ps.setInt(3, oi.getQuant());
+
+			ps.execute();
+			ps.close();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	//================= Get methods ===================================================
+	
+	public ArrayList<Item> getAllItems()
+	{
+		ArrayList<Item> itemList = new ArrayList<Item>();
+		try
+		{
+			Statement s = conn.createStatement();
+			ResultSet rs = s.executeQuery("SELECT * FROM ITEM");
+			
+			while(rs.next()) 
+			{
+				Item item = new Item(rs.getInt("item_id"),rs.getInt("total_quant"), rs.getString("item_name"));
+				itemList.add(item);
+			}
+			s.close();
+			rs.close();
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		Utility.sortById(itemList);
+		return itemList;
+	}
+	
+	public ArrayList<OrderItem> getAllOrderItems()
+	{
+		ArrayList<OrderItem> itemList = new ArrayList<OrderItem>();					
+			try
+			{				
+				Statement s = conn.createStatement();
+				ResultSet rs = s.executeQuery("SELECT * FROM ORDERITEM");
+				
+				while(rs.next()) 
+				{
+					OrderItem orderItem = new OrderItem(rs.getInt("item_id"),rs.getInt("order_id"), rs.getInt("quant"));
+					itemList.add(orderItem);
+				}
+				rs.close();
+				s.close();
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}	
+		return itemList;
+	}
+	
 	public ArrayList<Order> getAllOrders()
 	{
 		ArrayList<Order> orderList = new ArrayList<Order>();
@@ -203,25 +222,7 @@ public class DBBroker
 		
 		return orderList;
 	}
-
-	public void addOrderItem(OrderItem oi)
-	{		
-		PreparedStatement ps;
-		try
-		{
-			ps = conn.prepareStatement("INSERT INTO ORDERITEM(item_id, order_id, quant)VALUES(?, ?, ?)");
-			ps.setInt(1, oi.getItemId());
-			ps.setInt(2, oi.getOrderId());
-			ps.setInt(3, oi.getQuant());
-
-			ps.execute();
-			ps.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
+	
 	public ArrayList<Order> getOrdersForDate(LocalDate ld)
 	{
 		Date date = Date.valueOf(ld.toString());
@@ -313,6 +314,8 @@ public class DBBroker
 		return itemList;
 	}
 
+	//============== Remove methods =========================================
+	
 	public void removeOrder(int order_id)
 	{
 		try
@@ -334,7 +337,7 @@ public class DBBroker
 			e.printStackTrace();
 		}		
 	}
-
+	
 	public void removeItem(int id)
 	{
 		try

@@ -12,6 +12,11 @@ public class OrderItem implements Serializable
 	private int orderId;
 	private int quant;
 	
+	public OrderItem()
+	{
+		
+	}
+	
 	public OrderItem(int itemId, int orderId, int quant)
 	{
 		super();

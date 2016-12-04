@@ -15,6 +15,11 @@ public class Order implements Serializable
 	private LocalDate dateOut;
 	private boolean confirmed;
 
+	public Order()
+	{
+		
+	}
+	
 	public Order(int id, String name, LocalDate dateIn, LocalDate dateOut, boolean confirmed)
 	{
 		this.id = id;

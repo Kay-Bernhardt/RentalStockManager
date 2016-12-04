@@ -7,9 +7,14 @@ import java.util.Scanner;
 import model.DBBroker;
 import model.containers.Item;
 
+/**
+ * Class for loading initial data
+ * 
+ * @author Lord Administrator
+ *
+ */
 public class DataTextReader
 {
-
 	public static void main(String[] args)
 	{
 		// TODO Auto-generated method stub

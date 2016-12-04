@@ -36,6 +36,11 @@ public class Item implements Serializable
 		this.quantity = item.getQuantity();
 	}
 
+	public String toString()
+	{
+		return "ID: " + this.id + " Quantity: " + this.quantity + " Name: " + this.name;
+	}
+	
 //======================Getters / Setters =======================================================
 	
 	public int getId() {
@@ -60,11 +65,5 @@ public class Item implements Serializable
 
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public String toString()
-	{
-		return "ID: " + this.id + " Quantity: " + this.quantity + " Name: " + this.name;
-	}
-	
+	}	
 }

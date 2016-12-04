@@ -23,7 +23,7 @@ public class SqlProcedure
 		{
 		    String strTableName = rs.getString("TABLE_NAME");
 		    //System.out.println("TABLE_NAME is " + strTableName);
-		    if (strTableName.equals("ORDERS"))
+		    if (strTableName.equals("ORDERS"))//TODO change to ORDER
 		    {
 		    	ordersFlag = true;
 		    }
@@ -66,6 +66,7 @@ public class SqlProcedure
 	
 	public static void createTables(Connection conn) throws SQLException
 	{
+		//TODO Change table here
 		Statement s = conn.createStatement();
 		
 		System.out.println("Creating table Orders");

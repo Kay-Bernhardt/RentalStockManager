@@ -1,6 +1,10 @@
 package application;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.time.LocalDate;
 
 import application.ui_controller.MainController;
@@ -13,6 +17,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.DBBroker;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 
 public class Main extends Application
@@ -85,5 +91,31 @@ public class Main extends Application
 	public static void main(String[] args)
 	{
 		launch(args);
+		
+		{
+			String path = "meh";
+			try
+			{
+				path = getProgramPath2();
+			} catch (UnsupportedEncodingException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println(this.getClass().getProtectionDomain().getCodeSource().getLocation());
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText("Look, an Information Dialog");
+			alert.setContentText(path);
+
+			alert.showAndWait();
+		}
 	}
+	
+	public static String getProgramPath2() throws UnsupportedEncodingException {
+      URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
+      String jarPath = URLDecoder.decode(url.getFile(), "UTF-8");
+      String parentPath = new File(jarPath).getParentFile().getPath();
+      return parentPath;
+   }
 }

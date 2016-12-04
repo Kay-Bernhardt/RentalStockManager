@@ -1,35 +1,31 @@
 package application.ui_controller;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
 import model.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
-import model.containers.OrderItem;
+import utility.BackupUtil;
 import application.Main;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
@@ -65,10 +61,10 @@ public class ManagerController implements Initializable
 		datePicker.setValue(Main.date);
 		editButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
 		showStock();
-		showOrders();
-
+		showOrders();		
 		orderListView.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
+			//double click
 			@Override
 			public void handle(MouseEvent click)
 			{
@@ -132,7 +128,6 @@ public class ManagerController implements Initializable
 	@FXML
 	private void editOrder(ActionEvent even)
 	{
-		//TODO does it have to be a new order
 		ScreenNavigator.setUserData(orderListView.getSelectionModel().getSelectedItem());
 		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
 	}
@@ -143,9 +138,12 @@ public class ManagerController implements Initializable
 		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
 	}
 
+	// TODO remove old code
 	@FXML
 	private void writeDB(ActionEvent event)
 	{
+		BackupUtil.writeDBToFile();
+		/*
 		// make 3 lists
 		// write all lists to different files
 		ArrayList<Order> oList = DBBroker.getInstance().getAllOrders();
@@ -174,16 +172,19 @@ public class ManagerController implements Initializable
 			e.printStackTrace();
 		}
 		System.out.println("writeDB done");
+		*/
 	}
 
-	@SuppressWarnings("unchecked")
+	//TODO remove old code
 	@FXML
 	private void loadFromFile(ActionEvent event)
 	{
+		BackupUtil.loadFromFile();
+		/*
 		ArrayList<Item> iList = new ArrayList<Item>();
 		ArrayList<OrderItem> oiList = new ArrayList<OrderItem>();
 		ArrayList<Order> oList = new ArrayList<Order>();
-		if (fileExists("res/orders.ser") && fileExists("res/items.ser") && fileExists("res/orderitems.ser"))
+		if (Utility.fileExists("res/orders.ser") && Utility.fileExists("res/items.ser") && Utility.fileExists("res/orderitems.ser"))
 		{
 			try
 			{
@@ -231,18 +232,6 @@ public class ManagerController implements Initializable
 		}
 		System.out.println("loading done");
 		ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-	}
-
-	private boolean fileExists(String file)
-	{
-		File f = new File(file);
-		boolean flag = false;
-
-		if (f.exists())
-		{
-			flag = true;
-		}
-
-		return flag;
+		*/
 	}
 }
