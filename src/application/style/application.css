@@ -2,6 +2,7 @@
 
 .root {
 	-fx-background-color: #28272C;
+	-fx-selection-bar-color: #345C74;
 }
 
 .label {
@@ -46,14 +47,18 @@
 }
 
 .table-view {
-	-fx-background-color: #345C74;
+	-fx-background-color: #28272C;
 }
 
-.table-cell:even {
+.table-cell {
+	-fx-text-fill: #C1C1C4;
+}
+
+.table-row-cell:even {
 	-fx-background-color: #4B4A4F;
 }
 
-.table-cell {	
+.table-row-cell {	
 	-fx-background-color: #46454A;
 	-fx-text-fill: #C1C1C4;
 }
@@ -61,9 +66,29 @@
 .table-row-cell:selected {
 	-fx-background-color: #345C74;
 }
+
+.table-row-cell:filled:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-cell:selected {
+	-fx-background-color: #345C74;
+}
  
 .table-view .filler {
 	-fx-background-color: #28272C;
+}
+
+.table-row:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-row-cell:filled:focused:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected {
+	-fx-background-color: #345C74;
 }
 
 .table-view .header-panel {

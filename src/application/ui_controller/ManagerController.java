@@ -140,7 +140,7 @@ public class ManagerController implements Initializable
 	}
 
 	/**
-	 * Event handler fired when the user requests a new screen.
+	 * Event handler fired when the user requests a new screen. TODO edit this
 	 *
 	 * @param event
 	 *           the event that triggered the handler.
@@ -148,7 +148,8 @@ public class ManagerController implements Initializable
 	@FXML
 	private void createOrder(ActionEvent event)
 	{
-		ScreenNavigator.loadScreen(ScreenNavigator.CREATE_ORDER);
+		ScreenNavigator.setUserData(new Order());
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
 	}
 
 	@FXML
@@ -156,18 +157,6 @@ public class ManagerController implements Initializable
 	{
 		ScreenNavigator.setUserData(orderListView.getSelectionModel().getSelectedItem());
 		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
-	}
-
-	@FXML
-	private void editStock(ActionEvent event)
-	{
-		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
-	}
-
-	@FXML
-	private void updateDB(ActionEvent event)
-	{
-		DBBroker.getInstance().updateDB();
 	}
 	
 	@FXML
@@ -196,5 +185,17 @@ public class ManagerController implements Initializable
 		{
 			// ... user chose CANCEL or closed the dialog
 		}
+	}
+	
+	@FXML
+	private void editStock(ActionEvent event)
+	{
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
+	}	
+
+	@FXML
+	private void updateDB(ActionEvent event)
+	{
+		DBBroker.getInstance().updateDB();
 	}
 }
