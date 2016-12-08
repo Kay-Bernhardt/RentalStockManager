@@ -37,7 +37,7 @@ public class NewItemController implements Initializable
 	{
 			if(Utility.checkNumber(idTextField.getText()) != 0 && Utility.isUniqueId(Utility.checkNumber(idTextField.getText())) && Utility.checkNumber(quantTextField.getText()) != 0 && nameTextField.getText() != null && !nameTextField.getText().equals(""))
 			{
-				DBBroker.getInstance().addItem(new Item(Integer.parseInt(idTextField.getText()), Integer.parseInt(quantTextField.getText()), nameTextField.getText()));
+				DBBroker.getInstance().addItem(new Item(Double.parseDouble(idTextField.getText()), Integer.parseInt(quantTextField.getText()), nameTextField.getText()));
 		        ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
 			}
 	}

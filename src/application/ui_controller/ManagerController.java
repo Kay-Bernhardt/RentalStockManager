@@ -1,16 +1,15 @@
 package application.ui_controller;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import model.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
-import utility.BackupUtil;
 import application.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,15 +18,19 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.util.StringConverter;
 
 public class ManagerController implements Initializable
 {
@@ -42,7 +45,7 @@ public class ManagerController implements Initializable
 	@FXML
 	private TableView<Item> iTable;
 	@FXML
-	private TableColumn<Item, Integer> iID;
+	private TableColumn<Item, Double> iID;
 	@FXML
 	private TableColumn<Item, Integer> iQuant;
 	@FXML
@@ -61,10 +64,10 @@ public class ManagerController implements Initializable
 		datePicker.setValue(Main.date);
 		editButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
 		showStock();
-		showOrders();		
+		showOrders();
 		orderListView.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
-			//double click
+			// double click
 			@Override
 			public void handle(MouseEvent click)
 			{
@@ -85,9 +88,32 @@ public class ManagerController implements Initializable
 		ArrayList<Item> list = DBBroker.getInstance().getStockForDate(Main.date);
 		tableList.setAll(list);
 
-		iID.setCellValueFactory(new PropertyValueFactory<Item, Integer>("id"));
+		iID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
 		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
 		iName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+
+		iID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see
+				// DoubleStringConverter if needed
+				return null;
+			}
+		}));
 
 		iTable.setItems(tableList);
 	}
@@ -138,100 +164,37 @@ public class ManagerController implements Initializable
 		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
 	}
 
-	// TODO remove old code
 	@FXML
-	private void writeDB(ActionEvent event)
+	private void updateDB(ActionEvent event)
 	{
-		BackupUtil.writeDBToFile();
-		/*
-		// make 3 lists
-		// write all lists to different files
-		ArrayList<Order> oList = DBBroker.getInstance().getAllOrders();
-		ArrayList<Item> iList = DBBroker.getInstance().getAllItems();
-		ArrayList<OrderItem> oiList = DBBroker.getInstance().getAllOrderItems();
-
-		try
-		{
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("res/orders.ser"));
-			out.writeObject(oList);
-			out.close();
-
-			out = new ObjectOutputStream(new FileOutputStream("res/items.ser"));
-			out.writeObject(iList);
-			out.close();
-
-			out = new ObjectOutputStream(new FileOutputStream("res/orderitems.ser"));
-			out.writeObject(oiList);
-			out.close();
-
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		System.out.println("writeDB done");
-		*/
+		DBBroker.getInstance().updateDB();
 	}
-
-	//TODO remove old code
+	
 	@FXML
-	private void loadFromFile(ActionEvent event)
+	public void removeOrderButton(ActionEvent event)
 	{
-		BackupUtil.loadFromFile();
-		/*
-		ArrayList<Item> iList = new ArrayList<Item>();
-		ArrayList<OrderItem> oiList = new ArrayList<OrderItem>();
-		ArrayList<Order> oList = new ArrayList<Order>();
-		if (Utility.fileExists("res/orders.ser") && Utility.fileExists("res/items.ser") && Utility.fileExists("res/orderitems.ser"))
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Remove Order");
+		alert.setHeaderText("Do you really want to delete this Order?");
+		// alert.setContentText("Choose your option.");
+
+		ButtonType buttonTypeYes = new ButtonType("Yes");
+		// ButtonType buttonTypeTwo = new ButtonType("Two");
+		// ButtonType buttonTypeThree = new ButtonType("Three");
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+		alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeCancel);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == buttonTypeYes)
 		{
-			try
-			{
-				ObjectInputStream in = new ObjectInputStream(new FileInputStream("res/orders.ser"));
-				oList = (ArrayList<Order>) in.readObject();
-				in.close();
-
-				in = new ObjectInputStream(new FileInputStream("res/items.ser"));
-				iList = (ArrayList<Item>) in.readObject();
-				in.close();
-
-				in = new ObjectInputStream(new FileInputStream("res/orderitems.ser"));
-				oiList = (ArrayList<OrderItem>) in.readObject();
-				in.close();
-
-			} catch (ClassNotFoundException e)
-			{
-				e.printStackTrace();
-			} catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		if (iList != null && oList != null && oiList != null)
+			// ... user chose "Yes"
+			// remove this order/go back to main screen
+			DBBroker.getInstance().removeOrder(orderListView.getSelectionModel().getSelectedItem().getId());
+			showOrders();
+		} else
 		{
-			for (int i = 0; i < iList.size(); i++)
-			{
-				DBBroker.getInstance()
-						.addItem(new Item(iList.get(i).getId(), iList.get(i).getQuantity(), iList.get(i).getName()));
-			}
-
-			for (int i = 0; i < oList.size(); i++)
-			{
-				DBBroker.getInstance().addOrder(oList.get(i));
-			}
-
-			for (int i = 0; i < oiList.size(); i++)
-			{
-				DBBroker.getInstance().addOrderItem(oiList.get(i));
-			}
+			// ... user chose CANCEL or closed the dialog
 		}
-		System.out.println("loading done");
-		ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-		*/
 	}
 }

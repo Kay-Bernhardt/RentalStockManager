@@ -8,7 +8,7 @@ public class OrderItem implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int itemId;
+	private double itemId;
 	private int orderId;
 	private int quant;
 	
@@ -17,7 +17,7 @@ public class OrderItem implements Serializable
 		
 	}
 	
-	public OrderItem(int itemId, int orderId, int quant)
+	public OrderItem(double itemId, int orderId, int quant)
 	{
 		super();
 		this.itemId = itemId;
@@ -25,12 +25,12 @@ public class OrderItem implements Serializable
 		this.quant = quant;
 	}
 
-	public int getItemId()
+	public double getItemId()
 	{
 		return itemId;
 	}
 
-	public void setItemId(int itemId)
+	public void setItemId(double itemId)
 	{
 		this.itemId = itemId;
 	}

@@ -14,6 +14,12 @@ import model.containers.Item;
 import model.containers.Order;
 import model.containers.OrderItem;
 
+/**
+ * Currently useless
+ * 
+ * @author Lord Administrator
+ *
+ */
 public class BackupUtil
 {
 	private static String ORDERS 		= "res/orders.ser";

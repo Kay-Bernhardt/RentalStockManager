@@ -36,19 +36,29 @@ public class Utility
 
 	public static int checkNumber(String str)
 	{
+		System.out.println("checking number: " + str);
 		int number = 0;
 		boolean flag = true;
 		for (int i = 0; i < str.length() && flag; i++)
 		{
-			if (!Character.isDigit(str.charAt(i)))
+			System.out.println("Char at i: " + str.charAt(i));
+			if (!Character.isDigit(str.charAt(i)) && str.charAt(i) != '.')
 			{
 				flag = false;
 			}
 		}
 		if (flag)
 		{
-			number = Integer.parseInt(str);
+			if(str.contains("."))
+			{
+				number = -1;
+			}
+			else
+			{
+				number = Integer.parseInt(str);
+			}			
 		}
+		System.out.println("number: " + number);
 		return number;
 	}
 
@@ -58,8 +68,9 @@ public class Utility
 	 * @param id
 	 * @return true if it is a unique id false otherwise
 	 */
-	public static boolean isUniqueId(int id)
+	public static boolean isUniqueId(double id)
 	{
+		System.out.println("checking for id: " + id);
 		boolean flag = true;
 		ArrayList<Item> itemList = DBBroker.getInstance().getAllItems();
 		for (int i = 0; i < itemList.size(); i++)
@@ -69,6 +80,7 @@ public class Utility
 				flag = false;
 			}
 		}
+		System.out.println(flag);
 		return flag;
 	}
 
@@ -82,7 +94,7 @@ public class Utility
 
 			for (int i = 0; i < list.size() - 1; i++)
 			{
-				if (Integer.compare(list.get(i).getId(), list.get(i + 1).getId()) > 0)
+				if (Double.compare(list.get(i).getId(), list.get(i + 1).getId()) > 0)
 				{
 					Collections.swap(list, i, i + 1);
 					swapped = true;

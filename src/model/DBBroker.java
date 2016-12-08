@@ -18,9 +18,12 @@ import model.containers.OrderItem;
 public class DBBroker
 {
 	private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-	private String dbName= "RSM";
-	private String connectionURL = "jdbc:derby:" + dbName + ";create=true";
+	private String dbName = "RSM";
+	//private String dbNameNew = "RSMDB";
+	private String connectionURL = "jdbc:derby:" + dbName + ";create=false";
+	//private String connectionURLNew = "jdbc:derby:" + dbName + ";create=true";
 	
+	//private Connection connNew = null;
 	private Connection conn = null;
 	private static DBBroker instance = null;
 	
@@ -30,6 +33,7 @@ public class DBBroker
 		System.out.println("dbbroker constructor");
 		try
 		{
+			//connNew = DriverManager.getConnection(connectionURL);
 			conn = DriverManager.getConnection(connectionURL);
 			
 			//check if tables exist	
@@ -41,9 +45,7 @@ public class DBBroker
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
-		}
-
-		
+		}		
 	}
 	
 	public static DBBroker getInstance()
@@ -86,6 +88,17 @@ public class DBBroker
         }
 	}
 	
+	public void updateDB()
+	{
+		try
+		{
+			SqlProcedure.updateItemID(conn);
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	//===========  Add methods ==============================
 	
 	public void addItem(Item item)
@@ -93,7 +106,7 @@ public class DBBroker
 		try
 		{
 			PreparedStatement ps = conn.prepareStatement("insert into ITEM(item_id, item_name, total_quant) values (?, ?, ?)");
-            ps.setInt(1,item.getId());
+            ps.setDouble(1,item.getId());
             ps.setString(2, item.getName());
             ps.setInt(3, item.getQuantity());
             
@@ -139,7 +152,7 @@ public class DBBroker
 		try
 		{
 			ps = conn.prepareStatement("INSERT INTO ORDERITEM(item_id, order_id, quant)VALUES(?, ?, ?)");
-			ps.setInt(1, oi.getItemId());
+			ps.setDouble(1, oi.getItemId());
 			ps.setInt(2, oi.getOrderId());
 			ps.setInt(3, oi.getQuant());
 
@@ -163,7 +176,7 @@ public class DBBroker
 			
 			while(rs.next()) 
 			{
-				Item item = new Item(rs.getInt("item_id"),rs.getInt("total_quant"), rs.getString("item_name"));
+				Item item = new Item(rs.getDouble("item_id"),rs.getInt("total_quant"), rs.getString("item_name"));
 				itemList.add(item);
 			}
 			s.close();
@@ -187,7 +200,7 @@ public class DBBroker
 				
 				while(rs.next()) 
 				{
-					OrderItem orderItem = new OrderItem(rs.getInt("item_id"),rs.getInt("order_id"), rs.getInt("quant"));
+					OrderItem orderItem = new OrderItem(rs.getDouble("item_id"),rs.getInt("order_id"), rs.getInt("quant"));
 					itemList.add(orderItem);
 				}
 				rs.close();
@@ -277,6 +290,7 @@ public class DBBroker
 				}				
 			}
 		}
+		//TODO ???
 		//stock - order items for date
 			//get orders for date
 				//add items f
@@ -300,7 +314,7 @@ public class DBBroker
 			
 			while(rs.next()) 
 			{
-				Item item = new Item(rs.getInt("item_id"),rs.getInt("quant"), rs.getString("item_name"));
+				Item item = new Item(rs.getDouble("item_id"),rs.getInt("quant"), rs.getString("item_name"));
 				itemList.add(item);
 			}
 			s.close();
@@ -338,18 +352,18 @@ public class DBBroker
 		}		
 	}
 	
-	public void removeItem(int id)
+	public void removeItem(double id)
 	{
 		try
 		{
 			String sql = "DELETE FROM ORDERITEM WHERE item_id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setInt(1, id);
+			ps.setDouble(1, id);
 			ps.executeUpdate();			
 			
 			sql = "DELETE FROM ITEM WHERE item_id = ?";
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, id);
+			ps.setDouble(1, id);
 			ps.executeUpdate();	
 			
 			ps.close();

@@ -1,44 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.ManagerController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.ManagerController">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
          <children>
             <MenuBar>
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#writeDB" text="Write Backup" />
-                        <MenuItem mnemonicParsing="false" onAction="#loadFromFile" text="Load from Backup" />
+                    <MenuItem mnemonicParsing="false" onAction="#updateDB" text="Update id field" />
                   </items>
                 </Menu>
               </menus>
             </MenuBar>
-            <HBox prefHeight="0.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="0.0" prefWidth="200.0">
                <children>
                   <DatePicker fx:id="datePicker" onAction="#selectDate" />
-                  <Button mnemonicParsing="false" onAction="#createOrder" text="New Order" />
-                  <Button fx:id="editButton" mnemonicParsing="false" onAction="#editOrder" text="Edit Order" />
-                  <Button mnemonicParsing="false" onAction="#editStock" text="Stock" />
+                  <Button mnemonicParsing="false" onAction="#editStock" text="Stock">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin></Button>
                </children>
             </HBox>
-            <HBox prefHeight="440.0" prefWidth="600.0">
+            <HBox alignment="CENTER" fillHeight="false" prefHeight="440.0" prefWidth="600.0">
                <children>
-                  <TableView fx:id="iTable" prefHeight="300.0" prefWidth="550.0">
+                  <TableView fx:id="iTable" prefHeight="425.0">
                     <columns>
-                      <TableColumn fx:id="iID" prefWidth="30.0" text="ID" />
+                      <TableColumn fx:id="iID" prefWidth="35.0" text="ID" />
                       <TableColumn fx:id="iName" prefWidth="400.0" text="Name" />
                         <TableColumn fx:id="iQuant" prefWidth="75.0" text="Quantity" />
                     </columns>
                   </TableView>
-                  <ListView fx:id="orderListView" prefHeight="200.0" prefWidth="200.0" />
+                  <VBox>
+                     <children>
+                        <HBox>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#createOrder" text="New Order">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Button>
+                              <Button fx:id="editButton" mnemonicParsing="false" onAction="#editOrder" text="Edit Order">
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#removeOrderButton" text="Remove Order">
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <ListView fx:id="orderListView" prefHeight="400.0" prefWidth="200.0" />
+                     </children>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </VBox>
                </children>
             </HBox>
          </children>

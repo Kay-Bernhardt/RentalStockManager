@@ -83,6 +83,7 @@ public class Main extends Application
 	private Scene createScene(Pane mainPane)
 	{
 		Scene scene = new Scene(mainPane);
+		scene.getStylesheets().add(this.getClass().getResource("style/application.css").toExternalForm());
 		// scene.getStylesheets().setAll(getClass().getResource("vista.css").toExternalForm());
 
 		return scene;

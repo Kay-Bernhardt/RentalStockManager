@@ -80,20 +80,42 @@ public class SqlProcedure
 		
 		System.out.println("Creating table Item");
 		s.execute("CREATE TABLE ITEM	( " +
-						"item_id 	INT	CONSTRAINT ITEM_PK PRIMARY KEY, " +
+						"item_id 	DOUBLE	CONSTRAINT ITEM_PK PRIMARY KEY, " +
 						"item_name 	VARCHAR(255) 	NOT NULL, " +
 						"total_quant INT 			NOT NULL )");
 		System.out.println("Item created");
 		
 		System.out.println("Creating table OrderItem");
 		s.execute("CREATE TABLE ORDERITEM (" +
-						"item_id 	INT, " +
+						"item_id 	DOUBLE, " +
 						"order_id 	INT, " +
 						"quant 		INT 		NOT NULL, " +
 						"PRIMARY KEY 	(item_id, order_id), " +
 						"CONSTRAINT fk_orderitem_item FOREIGN KEY (item_id) REFERENCES ITEM(item_id), " +
 						"CONSTRAINT fk_orderitem_order FOREIGN KEY (order_id) REFERENCES ORDERS(order_id))");
 		System.out.println("OrderItem created");
+		s.close();
+	}
+	
+	public static void updateItemID(Connection conn) throws SQLException
+	{
+		//change data type of item and orderItem from int to double
+		Statement s = conn.createStatement();
+		
+		System.out.println("updating item");
+		s.execute("ALTER TABLE ITEM ADD COLUMN NEW_ID DOUBLE");
+		s.execute("UPDATE ITEM SET NEW_ID=item_id");
+		s.execute("ALTER TABLE ITEM DROP COLUMN item_id");
+		s.execute("RENAME COLUMN ITEM.NEW_ID TO item_id");
+		System.out.println("updating item done");
+		
+		System.out.println("updating orderItem");
+		s.execute("ALTER TABLE ORDERITEM ADD COLUMN NEW_ID DOUBLE");
+		s.execute("UPDATE ORDERITEM SET NEW_ID=item_id");
+		s.execute("ALTER TABLE ORDERITEM DROP COLUMN item_id");
+		s.execute("RENAME COLUMN ORDERITEM.NEW_ID TO item_id");
+		System.out.println("updating orderItem done");
+		
 		s.close();
 	}
 }

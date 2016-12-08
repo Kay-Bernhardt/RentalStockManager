@@ -44,7 +44,7 @@ public class EditItemController	implements Initializable
 		{
 			DBBroker.getInstance().removeItem(item.getId());
 			
-			DBBroker.getInstance().addItem(new Item(Integer.parseInt(idTextField.getText()), Integer.parseInt(quantTextField.getText()), nameTextField.getText()));
+			DBBroker.getInstance().addItem(new Item(Double.parseDouble(idTextField.getText()), Integer.parseInt(quantTextField.getText()), nameTextField.getText()));
 	        ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
 		}
 	}
