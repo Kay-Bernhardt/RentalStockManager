@@ -1,37 +1,37 @@
 package application.ui_controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
-import model.containers.OrderItem;
 import application.Main;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.util.StringConverter;
 
 public class ManagerController implements Initializable
 {
@@ -41,14 +41,16 @@ public class ManagerController implements Initializable
 	private Label greetingLabel;
 	@FXML
 	private Button editButton;
+	@FXML
+	private Button removeButton;
 
 	// STOCK TABLE
 	@FXML
 	private TableView<Item> iTable;
 	@FXML
-	private TableColumn<Item, Integer> iID;
+	private TableColumn<Item, Double> iID;
 	@FXML
-	private TableColumn<Item, Integer> iQuant;
+	private TableColumn<Item, Double> iQuant;
 	@FXML
 	private TableColumn<Item, String> iName;
 
@@ -64,11 +66,12 @@ public class ManagerController implements Initializable
 		datePicker.setEditable(false);
 		datePicker.setValue(Main.date);
 		editButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
+		removeButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
 		showStock();
 		showOrders();
-
 		orderListView.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
+			// double click
 			@Override
 			public void handle(MouseEvent click)
 			{
@@ -89,9 +92,53 @@ public class ManagerController implements Initializable
 		ArrayList<Item> list = DBBroker.getInstance().getStockForDate(Main.date);
 		tableList.setAll(list);
 
-		iID.setCellValueFactory(new PropertyValueFactory<Item, Integer>("id"));
-		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
 		iName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+		iID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
+		iID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see
+				// DoubleStringConverter if needed
+				return null;
+			}
+		}));
+		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		iQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see
+				// DoubleStringConverter if needed
+				return null;
+			}
+		}));
 
 		iTable.setItems(tableList);
 	}
@@ -118,7 +165,7 @@ public class ManagerController implements Initializable
 	}
 
 	/**
-	 * Event handler fired when the user requests a new screen.
+	 * Event handler fired when the user requests a new screen. TODO edit this
 	 *
 	 * @param event
 	 *           the event that triggered the handler.
@@ -126,123 +173,60 @@ public class ManagerController implements Initializable
 	@FXML
 	private void createOrder(ActionEvent event)
 	{
-		ScreenNavigator.loadScreen(ScreenNavigator.CREATE_ORDER);
+		ScreenNavigator.setUserData(new Order());
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
 	}
 
 	@FXML
 	private void editOrder(ActionEvent even)
 	{
-		//TODO does it have to be a new order
 		ScreenNavigator.setUserData(orderListView.getSelectionModel().getSelectedItem());
 		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ORDER);
 	}
+	
+	@FXML
+	public void removeOrderButton(ActionEvent event)
+	{
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Remove Order");
+		alert.setHeaderText("Do you really want to delete this Order?");
+		// alert.setContentText("Choose your option.");
 
+		ButtonType buttonTypeYes = new ButtonType("Yes");
+		// ButtonType buttonTypeTwo = new ButtonType("Two");
+		// ButtonType buttonTypeThree = new ButtonType("Three");
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+		alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeCancel);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == buttonTypeYes)
+		{
+			// ... user chose "Yes"
+			// remove this order/go back to main screen
+			DBBroker.getInstance().removeOrder(orderListView.getSelectionModel().getSelectedItem().getId());
+			showOrders();
+		} else
+		{
+			// ... user chose CANCEL or closed the dialog
+		}
+	}
+	
 	@FXML
 	private void editStock(ActionEvent event)
 	{
 		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_STOCK);
-	}
+	}	
 
 	@FXML
-	private void writeDB(ActionEvent event)
+	private void updateDB(ActionEvent event)
 	{
-		// make 3 lists
-		// write all lists to different files
-		ArrayList<Order> oList = DBBroker.getInstance().getAllOrders();
-		ArrayList<Item> iList = DBBroker.getInstance().getAllItems();
-		ArrayList<OrderItem> oiList = DBBroker.getInstance().getAllOrderItems();
-
-		try
-		{
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("res/orders.ser"));
-			out.writeObject(oList);
-			out.close();
-
-			out = new ObjectOutputStream(new FileOutputStream("res/items.ser"));
-			out.writeObject(iList);
-			out.close();
-
-			out = new ObjectOutputStream(new FileOutputStream("res/orderitems.ser"));
-			out.writeObject(oiList);
-			out.close();
-
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		System.out.println("writeDB done");
+		DBBroker.getInstance().updateDB();
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@FXML
-	private void loadFromFile(ActionEvent event)
+	private void updateItem(ActionEvent event)
 	{
-		ArrayList<Item> iList = new ArrayList<Item>();
-		ArrayList<OrderItem> oiList = new ArrayList<OrderItem>();
-		ArrayList<Order> oList = new ArrayList<Order>();
-		if (fileExists("res/orders.ser") && fileExists("res/items.ser") && fileExists("res/orderitems.ser"))
-		{
-			try
-			{
-				ObjectInputStream in = new ObjectInputStream(new FileInputStream("res/orders.ser"));
-				oList = (ArrayList<Order>) in.readObject();
-				in.close();
-
-				in = new ObjectInputStream(new FileInputStream("res/items.ser"));
-				iList = (ArrayList<Item>) in.readObject();
-				in.close();
-
-				in = new ObjectInputStream(new FileInputStream("res/orderitems.ser"));
-				oiList = (ArrayList<OrderItem>) in.readObject();
-				in.close();
-
-			} catch (ClassNotFoundException e)
-			{
-				e.printStackTrace();
-			} catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		if (iList != null && oList != null && oiList != null)
-		{
-			for (int i = 0; i < iList.size(); i++)
-			{
-				DBBroker.getInstance()
-						.addItem(new Item(iList.get(i).getId(), iList.get(i).getQuantity(), iList.get(i).getName()));
-			}
-
-			for (int i = 0; i < oList.size(); i++)
-			{
-				DBBroker.getInstance().addOrder(oList.get(i));
-			}
-
-			for (int i = 0; i < oiList.size(); i++)
-			{
-				DBBroker.getInstance().addOrderItem(oiList.get(i));
-			}
-		}
-		System.out.println("loading done");
-		ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-	}
-
-	private boolean fileExists(String file)
-	{
-		File f = new File(file);
-		boolean flag = false;
-
-		if (f.exists())
-		{
-			flag = true;
-		}
-
-		return flag;
+		DBBroker.getInstance().updateItem();
 	}
 }

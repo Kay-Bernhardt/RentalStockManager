@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.EditStockController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.EditStockController">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <HBox alignment="CENTER" prefHeight="0.0" prefWidth="200.0">
          <children>
-            <TableView fx:id="iTable" prefHeight="470.0" prefWidth="600.0">
+            <TableView fx:id="iTable" prefHeight="470.0">
                <columns>
-                  <TableColumn fx:id="iID" prefWidth="30.0" text="ID" />
+                  <TableColumn fx:id="iID" prefWidth="35.0" text="ID" />
                   <TableColumn fx:id="iName" prefWidth="350.0" text="Name" />
                   <TableColumn fx:id="iQuant" prefWidth="75.0" text="Quantity" />
                </columns>
             </TableView>
-            <HBox prefHeight="0.0" prefWidth="200.0">
+            <VBox alignment="CENTER" fillWidth="false" prefHeight="200.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#newItemButton" text="New Item" />
-                  <Button fx:id="editItemButton" mnemonicParsing="false" onAction="#editItemButton" text="Edit Item" />
-                  <Button mnemonicParsing="false" onAction="#cancelButton" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#newItemButton" prefWidth="80.0" text="New Item" />
+                  <Button fx:id="editItemButton" mnemonicParsing="false" onAction="#editItemButton" prefWidth="80.0" text="Edit Item">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeButton" prefWidth="80.0" text="Remove">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#cancelButton" prefWidth="80.0" text="Cancel">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Button>
                </children>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
+      </HBox>
    </children>
 </StackPane>

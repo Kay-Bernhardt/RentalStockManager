@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.CreateOrderController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ui_controller.CreateOrderController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
@@ -57,14 +63,14 @@
                <children>
                   <TableView fx:id="iStockTable" prefHeight="300.0" prefWidth="390.0">
                      <columns>
-                        <TableColumn fx:id="stID" prefWidth="30.0" text="ID" />
+                        <TableColumn fx:id="stID" prefWidth="35.0" text="ID" />
                         <TableColumn fx:id="stName" prefWidth="280.0" text="Name" />
                         <TableColumn fx:id="stQuant" prefWidth="75.0" text="Quantity" />
                      </columns>
                   </TableView>
                   <TableView fx:id="iOrderTable" prefHeight="200.0" prefWidth="390.0">
                      <columns>
-                        <TableColumn fx:id="oID" prefWidth="30.0" text="ID" />
+                        <TableColumn fx:id="oID" prefWidth="35.0" text="ID" />
                         <TableColumn fx:id="oName" prefWidth="280.0" text="Name" />
                         <TableColumn fx:id="oQuant" prefWidth="75.0" text="Quantity" />
                      </columns>
@@ -85,7 +91,7 @@
             <HBox prefWidth="200.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#cancelButton" text="Cancel" />
-                  <Button mnemonicParsing="false" onAction="#saveButton" text="Save" />
+                  <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveButton" text="Save" />
                </children>
             </HBox>
          </children>

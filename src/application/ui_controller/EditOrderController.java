@@ -1,233 +1,366 @@
 package application.ui_controller;
 
 import java.net.URL;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ResourceBundle;
-
 import utility.Utility;
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
 import model.containers.OrderItem;
 import application.Main;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.StringConverter;
 
 public class EditOrderController implements Initializable
 {
-
+	@FXML
+	private Label topLabel;
 	@FXML
 	private TextField nameTextField;
 	@FXML
-	private TextField addTextField;
-	@FXML
-	private TextField removeTextField;
+	private TextField numberTextField;
 	@FXML
 	private Button addButton;
 	@FXML
 	private Button removeButton;
+	@FXML
+	private Button saveButton;
 	@FXML
 	private DatePicker outDatePicker;
 	@FXML
 	private DatePicker inDatePicker;
 	@FXML
 	private CheckBox confirmedCheckBox;
-	
-	//StockTable
+
+	// StockTable
 	@FXML
-	private TableView<Item> iStockTable;	
+	private TableView<Item> iStockTable;
 	@FXML
-	private TableColumn<Item, Integer> stID;	
+	private TableColumn<Item, Double> stID;
 	@FXML
-	private TableColumn<Item, Integer> stQuant;	
+	private TableColumn<Item, Double> stQuant;
 	@FXML
 	private TableColumn<Item, String> stName;
-	
-	//OrderTable
+
+	// OrderTable
 	@FXML
-	private TableView<Item> iOrderTable;	
+	private TableView<Item> iOrderTable;
 	@FXML
-	private TableColumn<Item, Integer> oID;	
+	private TableColumn<Item, Double> oID;
 	@FXML
-	private TableColumn<Item, Integer> oQuant;	
+	private TableColumn<Item, Double> oQuant;
 	@FXML
 	private TableColumn<Item, String> oName;
-	
+
 	private final ObservableList<Item> orderTableList = FXCollections.observableArrayList();
 	private final ObservableList<Item> stockTableList = FXCollections.observableArrayList();
 	private Order order;
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		order = (Order)ScreenNavigator.getUserData();
-		
+		order = (Order) ScreenNavigator.getUserData();
+
+		if (order.getId() == -1)
+		{
+			topLabel.setText("New Order");
+		}
+
 		outDatePicker.setEditable(false);
 		inDatePicker.setEditable(false);
-		outDatePicker.setValue(order.getDateOut());
-		inDatePicker.setValue(order.getDateIn());
-		
+
+		saveButton.setDisable(true);
+		nameTextField.textProperty().addListener(new ChangeListener<String>()
+		{
+
+			@Override
+			public void changed(ObservableValue<? extends String> ov, String t, String t1)
+			{
+				if (t1.equals(""))
+					saveButton.setDisable(true);
+				else
+					saveButton.setDisable(false);
+			}
+		});
+
+		if (order.getId() == -1)
+		{
+			// new order
+			outDatePicker.setValue(Main.date);
+			inDatePicker.setValue(Main.date);
+
+			confirmedCheckBox.setSelected(false);
+		} else
+		{
+			// edit order
+			outDatePicker.setValue(order.getDateOut());
+			inDatePicker.setValue(order.getDateIn());
+
+			orderTableList.setAll(DBBroker.getInstance().getOrderItemsForOrder(order.getId()));
+			confirmedCheckBox.setSelected(order.isConfirmed());
+			nameTextField.setText(order.getName());
+		}
+
 		stockTableList.setAll(DBBroker.getInstance().getStockForDate(Main.date));
-		orderTableList.setAll(DBBroker.getInstance().getOrderItemsForOrder(order.getId()));
-		
-		stID.setCellValueFactory(new PropertyValueFactory<Item, Integer>("id"));
-		stQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
+
 		stName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-		
-		oID.setCellValueFactory(new PropertyValueFactory<Item, Integer>("id"));
-		oQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
+		stID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
+		stID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see DoubleStringConverter if needed
+				return null;
+			}
+		}));
+		stQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		stQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see DoubleStringConverter if needed
+				return null;
+			}
+		}));
+
+		iStockTable.setItems(stockTableList);
+
 		oName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-		
-		addTextField.setText("0");
-		removeTextField.setText("0");
-		confirmedCheckBox.setSelected(order.isConfirmed());
-		
-		//disable buttons if nothing is selected
+		oID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
+		oID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see DoubleStringConverter if needed
+				return null;
+			}
+		}));
+		oQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		oQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see DoubleStringConverter if needed
+				return null;
+			}
+		}));
+
+		iOrderTable.setItems(orderTableList);
+
+		numberTextField.setText("0");
+
+		// disable buttons if nothing is selected
 		addButton.disableProperty().bind(iStockTable.getSelectionModel().selectedItemProperty().isNull());
 		removeButton.disableProperty().bind(iOrderTable.getSelectionModel().selectedItemProperty().isNull());
-		
-		iStockTable.setItems(stockTableList);
-		iOrderTable.setItems(orderTableList);
-		
-		nameTextField.setText(order.getName());
+
+		iOrderTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Item>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Item> observable, Item oldValue, Item newValue)
+			{
+				// Your action here
+				if (iOrderTable.getSelectionModel().getSelectedItem() != null)
+				{
+					if (iStockTable.getSelectionModel().getSelectedItem() != null) // deselect other table
+					{
+						iStockTable.getSelectionModel().clearSelection();
+					}
+				}
+			}
+		});
+
+		iStockTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Item>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Item> observable, Item oldValue, Item newValue)
+			{
+				// Your action here
+				if (iStockTable.getSelectionModel().getSelectedItem() != null)
+				{
+					if (iOrderTable.getSelectionModel().getSelectedItem() != null) // deselect other table
+					{
+						iOrderTable.getSelectionModel().clearSelection();
+					}
+				}
+			}
+		});
 	}
-    
+
 	@FXML
-    private void cancelButton(ActionEvent event) {
-        ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-    }
-    
-    @FXML
-    private void addButton(ActionEvent event) {		
-    	//add selected item to orderTableList
-    	Item temp = iStockTable.getSelectionModel().getSelectedItem();
-    	Item item = new Item(temp);
-    	item.setQuantity(Utility.checkNumber(addTextField.getText()));
-    	int index = -1;
-    	
-		//remove quant form stock list
-		index = Utility.findIndex(item, stockTableList);
+	private void cancelButton(ActionEvent event)
+	{
+		ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
+	}
+
+	@FXML
+	private void addButton(ActionEvent event)
+	{
+		// add selected item to orderTableList
+		Item temp = iStockTable.getSelectionModel().getSelectedItem();
+		Item item = new Item(temp);
+		item.setQuantity(Utility.checkNumber(numberTextField.getText()));
+		int index = -1;
+
+		// remove quant form stock list
+		index = Utility.findIndex(item, stockTableList); // iStockTable.getSelectionModel().getSelectedIndex();
+																			// why no use this?
 		if (index != -1 && item.getQuantity() != 0)
 		{
-			int newQuant = (stockTableList.get(index).getQuantity()) - (item.getQuantity());
+			double newQuant = (stockTableList.get(index).getQuantity()) - (item.getQuantity());
 			if (newQuant > -1)
 			{
 				stockTableList.get(index).setQuantity(newQuant);
 				iStockTable.getColumns().get(0).setVisible(false);
 				iStockTable.getColumns().get(0).setVisible(true);
-				
-				//check if item already exists
-		    	index = Utility.findIndex(item, orderTableList);
-		    	if(index == -1)
-		    	{
-		    		orderTableList.add(item);
-		    	}
-		    	else
-		    	{
-		    		orderTableList.get(index).setQuantity(orderTableList.get(index).getQuantity() + item.getQuantity());
+
+				// check if item already exists
+				index = Utility.findIndex(item, orderTableList);
+				if (index == -1)
+				{
+					orderTableList.add(item);
+				} else
+				{
+					orderTableList.get(index).setQuantity(orderTableList.get(index).getQuantity() + item.getQuantity());
 					iOrderTable.getColumns().get(0).setVisible(false);
 					iOrderTable.getColumns().get(0).setVisible(true);
-		    	}
+				}
 			}
-		}		
-    }
-    
-    @FXML
-    private void removeButton(ActionEvent event) {
-    	Item temp = iOrderTable.getSelectionModel().getSelectedItem();
-    	Item item = new Item(temp);
-    	item.setQuantity(Utility.checkNumber(removeTextField.getText()));
-    	
-    	//find item in order list and remove quant if quant will be 0 remove item
-    	int index = Utility.findIndex(item, orderTableList); 
-    	if(orderTableList.get(index).getQuantity() - item.getQuantity() > -1)
-    	{
-	    	if (orderTableList.get(index).getQuantity() - item.getQuantity() == 0)
-	    	{
-	    		//remove from list
-	    		orderTableList.remove(index);
-	    	}
-	    	else
-	    	{
-	    		orderTableList.get(index).setQuantity(orderTableList.get(index).getQuantity() - item.getQuantity());
-	    	}	    	
-	    	//find item in stock list and add
-			index = Utility.findIndex(item, stockTableList);
-			stockTableList.get(index).setQuantity(stockTableList.get(index).getQuantity() + item.getQuantity());
-    	}
-    	else
-    	{
-    		//TODO remove from order list and add correct amount to stock if amount is greater than available
-    	}
-		
+		}
+		iStockTable.getSelectionModel().clearSelection();
+		numberTextField.setText("0");
+	}
+
+	@FXML
+	private void removeButton(ActionEvent event)
+	{
+		// TODO this need a rewrite
+		Item temp = iOrderTable.getSelectionModel().getSelectedItem();
+		Item item = new Item(temp);
+		item.setQuantity(Utility.checkNumber(numberTextField.getText())); // int removeQuantity = iOrderTable.getSelectionModel().getSelectedItem().getQuantity(); //us this i guess
+
+		// find item in order list and remove quantity if quantity will be 0 remove item
+		int index = Utility.findIndex(item, orderTableList); // iOrderTable.getSelectionModel().getSelectedIndex(); why no use this?
+
+		if (orderTableList.get(index).getQuantity() - item.getQuantity() < 0) // is the quantity to be removed greater than available quantity?
+		{
+			item.setQuantity(iOrderTable.getSelectionModel().getSelectedItem().getQuantity());
+		}
+
+		if (orderTableList.get(index).getQuantity() - item.getQuantity() == 0)
+		{
+			// remove from list
+			orderTableList.remove(index);
+		} else
+		{
+			orderTableList.get(index).setQuantity(orderTableList.get(index).getQuantity() - item.getQuantity());
+		}
+		// find item in stock list and add
+		index = Utility.findIndex(item, stockTableList);
+		stockTableList.get(index).setQuantity(stockTableList.get(index).getQuantity() + item.getQuantity());
+
 		iStockTable.getColumns().get(0).setVisible(false);
 		iStockTable.getColumns().get(0).setVisible(true);
 		iOrderTable.getColumns().get(0).setVisible(false);
 		iOrderTable.getColumns().get(0).setVisible(true);
-    }
-    
+
+		if (iOrderTable.getSelectionModel().getSelectedItem() != null)
+		{
+			iOrderTable.getSelectionModel().clearSelection();
+		}
+		numberTextField.setText("0");
+	}
 
 	@FXML
-    private void saveButton(ActionEvent event) 
+	private void saveButton(ActionEvent event)
 	{
-		if(nameTextField.getText() != null && !nameTextField.getText().equals(""))
+		if (nameTextField.getText() != null && !nameTextField.getText().equals("")) // TODO remove this if maybe because the button should be disabled anyway
 		{
-			//Remove the old order + items
-			DBBroker.getInstance().removeOrder(this.order.getId());
-			
+			if (this.order.getId() != -1) // Remove the old order + items if it is not a new order
+			{
+				DBBroker.getInstance().removeOrder(this.order.getId());
+			}
+
 			Order o = new Order(-1, nameTextField.getText(), inDatePicker.getValue(), outDatePicker.getValue(), confirmedCheckBox.isSelected());
 			o.setId(DBBroker.getInstance().addOrder(o));
 			OrderItem oi;
-	
-			for(int i = 0; i < orderTableList.size(); i++)
+
+			for (int i = 0; i < orderTableList.size(); i++)
 			{
 				oi = new OrderItem(orderTableList.get(i).getId(), o.getId(), orderTableList.get(i).getQuantity());
 				DBBroker.getInstance().addOrderItem(oi);
-			}		
-			
+			}
+
 			ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-		}
-    }
-	
-	@FXML
-	public void removeOrderButton(ActionEvent event)
-	{
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Remove Order");
-		alert.setHeaderText("Do you really want to delete this Order?");
-		//alert.setContentText("Choose your option.");
-
-		ButtonType buttonTypeYes = new ButtonType("Yes");
-		//ButtonType buttonTypeTwo = new ButtonType("Two");
-		//ButtonType buttonTypeThree = new ButtonType("Three");
-		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-
-		alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeCancel);
-
-		Optional<ButtonType> result = alert.showAndWait();
-		if (result.get() == buttonTypeYes)
-		{
-		    // ... user chose "Yes"
-			//remove this order/go back to main screen
-			DBBroker.getInstance().removeOrder(this.order.getId());
-			ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
-		} else 
-		{
-		    // ... user chose CANCEL or closed the dialog
 		}
 	}
+
 }

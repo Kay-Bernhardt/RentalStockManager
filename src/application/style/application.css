@@ -1,1 +1,151 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root {
+	-fx-background-color: #28272C;
+	-fx-selection-bar-color: #345C74;
+}
+
+.label {
+	-fx-text-fill: #C1C1C4;
+}
+
+.button {
+	-fx-background-color: radial-gradient(center 50% 50%, radius 100%, #345C74, #4286f4); /*color of button body */
+	-fx-text-fill: #C1C1C4;
+  	-fx-background-radius: 0 0 0 0;
+  	-fx-border-color: #5e9bff; 
+  	-fx-border-width: 0.05em;
+}
+
+.toggle-button {
+	-fx-background-color: #38333E;
+	-fx-text-fill: #C1C1C4;
+	-fx-background-radius: 0 0 0 0;
+}
+
+.toggle-button:selected {
+	-fx-background-color: radial-gradient(center 50% 50%, radius 100%, #345C74, #4286f4);
+	-fx-border-color: #5e9bff; 
+  	-fx-border-width: 0.05em;
+}
+
+.list-view {
+	-fx-background-color: #46454A;
+}
+
+.list-cell {
+	-fx-background-color: #46454A;
+	-fx-text-fill: #C1C1C4;
+}
+
+.list-cell:even {
+	-fx-background-color: #4B4A4F;
+}
+
+.list-cell:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-view {
+	-fx-background-color: #28272C;
+}
+
+.table-cell {
+	-fx-text-fill: #C1C1C4;
+}
+
+.table-row-cell:even {
+	-fx-background-color: #4B4A4F;
+}
+
+.table-row-cell {	
+	-fx-background-color: #46454A;
+	-fx-text-fill: #C1C1C4;
+}
+
+.table-row-cell:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-row-cell:filled:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-cell:selected {
+	-fx-background-color: #345C74;
+}
+ 
+.table-view .filler {
+	-fx-background-color: #28272C;
+}
+
+.table-row:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-row-cell:filled:focused:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected {
+	-fx-background-color: #345C74;
+}
+
+.table-view .header-panel {
+	-fx-background-color: #28272C;
+}
+
+.table-view .column-header {
+	-fx-background-color: #38333E;
+}
+
+.scroll-bar {
+	-fx-background-color: #4B4A4F;
+}
+
+.tab {
+	-fx-background-color: #38333E;
+	-fx-background-radius: 0 0 0 0;
+	-fx-border-width:20px;
+}
+
+.tab:selected {
+	-fx-background-color: radial-gradient(center 50% 50%, radius 100%, #345C74, #4286f4);
+	-fx-border-color: #5e9bff; 
+  	-fx-border-width: 0.05em;
+}
+
+.tab-label {
+	-fx-text-fill: #C1C1C4;
+}
+
+.tab-header-background {
+	-fx-background-color: #28272C;
+}
+
+.text-field {
+	-fx-background-color: #38333E;
+	-fx-text-fill: #C1C1C4;
+}
+
+.spinner .increment-arrow-button {
+	-fx-body-color: linear-gradient(#345C74, #4286f4);
+	-fx-background-color: linear-gradient(#345C74, #4286f4);
+}
+.spinner .decrement-arrow-button {
+	-fx-body-color: linear-gradient(#4286f4, #345C74);
+	-fx-background-color: linear-gradient(#4286f4, #345C74);
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+	-fx-background-color: #C1C1C4;
+}
+
+.header-panel {
+	-fx-background-color: #28272C;
+}
+
+.menu-bar {
+	-fx-background-color: #28272C;
+}

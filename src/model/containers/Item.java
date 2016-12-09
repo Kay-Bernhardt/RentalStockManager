@@ -9,8 +9,8 @@ public class Item implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id;
-	private int quantity;
+	private double id;
+	private double quantity;
 	private String name;
 
 //===================== Constructor ===========================================
@@ -22,7 +22,7 @@ public class Item implements Serializable
 		this.name = "This Item does not exist";
 	}
 	
-	public Item(int id, int quantity, String name)
+	public Item(double id, double quantity, String name)
 	{
 		this.id = id;
 		this.name = name;		
@@ -36,21 +36,26 @@ public class Item implements Serializable
 		this.quantity = item.getQuantity();
 	}
 
+	public String toString()
+	{
+		return "ID: " + this.id + " Quantity: " + this.quantity + " Name: " + this.name;
+	}
+	
 //======================Getters / Setters =======================================================
 	
-	public int getId() {
+	public double getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(double id) {
 		this.id = id;
 	}
 
-	public int getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 
@@ -60,11 +65,5 @@ public class Item implements Serializable
 
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public String toString()
-	{
-		return "ID: " + this.id + " Quantity: " + this.quantity + " Name: " + this.name;
-	}
-	
+	}	
 }
