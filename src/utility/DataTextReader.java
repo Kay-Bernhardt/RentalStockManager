@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 
 /**

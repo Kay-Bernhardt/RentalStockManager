@@ -1,10 +1,11 @@
-package application.ui_controller;
+package old;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.ui_controller.ScreenNavigator;
 import utility.Utility;
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

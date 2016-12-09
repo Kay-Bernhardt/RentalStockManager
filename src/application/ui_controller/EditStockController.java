@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ResourceBundle;
 
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,30 +25,29 @@ public class EditStockController implements Initializable
 {
 	@FXML
 	private Button editItemButton;
-	
+	@FXML
+	private Button removeButton;
+
 	private final ObservableList<Item> stockTableList = FXCollections.observableArrayList();
-	
-	//STOCK TABLE
+
+	// STOCK TABLE
 	@FXML
-	private TableView<Item> iTable;	
+	private TableView<Item> iTable;
 	@FXML
-	private TableColumn<Item, Double> iID;	
+	private TableColumn<Item, Double> iID;
 	@FXML
-	private TableColumn<Item, Integer> iQuant;	
+	private TableColumn<Item, Double> iQuant;
 	@FXML
 	private TableColumn<Item, String> iName;
-	
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		editItemButton.disableProperty().bind(iTable.getSelectionModel().selectedItemProperty().isNull());
-      stockTableList.setAll(DBBroker.getInstance().getAllItems());
-        
-		iID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
-		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
+		stockTableList.setAll(DBBroker.getInstance().getAllItems());
+
 		iName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-		
+		iID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
 		iID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
 		{
 			private final NumberFormat nf = DecimalFormat.getNumberInstance();
@@ -71,9 +70,32 @@ public class EditStockController implements Initializable
 				return null;
 			}
 		}));
-		
+		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		iQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see
+				// DoubleStringConverter if needed
+				return null;
+			}
+		}));
+
 		iTable.setItems(stockTableList);
-		
+
 		iTable.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
 			@Override
@@ -89,24 +111,34 @@ public class EditStockController implements Initializable
 				}
 			}
 		});
+
+		removeButton.disableProperty().bind(iTable.getSelectionModel().selectedItemProperty().isNull());
 	}
-	
+
 	@FXML
-    private void cancelButton(ActionEvent event) 
+	private void cancelButton(ActionEvent event)
 	{
-        ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
+		ScreenNavigator.loadScreen(ScreenNavigator.MANAGER);
 	}
-	
+
 	@FXML
-    private void newItemButton(ActionEvent event) 
+	private void newItemButton(ActionEvent event)
 	{
-        ScreenNavigator.loadScreen(ScreenNavigator.NEW_ITEM);
+		ScreenNavigator.setUserData(new Item());
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ITEM);
 	}
-	
+
 	@FXML
-    private void editItemButton(ActionEvent event) 
+	private void editItemButton(ActionEvent event)
 	{
 		ScreenNavigator.setUserData(iTable.getSelectionModel().getSelectedItem());
-        ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ITEM);
+		ScreenNavigator.loadScreen(ScreenNavigator.EDIT_ITEM);
+	}
+
+	@FXML
+	private void removeButton(ActionEvent event)
+	{
+		DBBroker.getInstance().removeItem(iTable.getSelectionModel().getSelectedItem().getId());
+		stockTableList.setAll(DBBroker.getInstance().getAllItems());
 	}
 }

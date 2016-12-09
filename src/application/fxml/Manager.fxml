@@ -22,6 +22,7 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#updateDB" text="Update id field" />
+                        <MenuItem mnemonicParsing="false" onAction="#updateItem" text="Update Item Quantity" />
                   </items>
                 </Menu>
               </menus>
@@ -58,7 +59,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#removeOrderButton" text="Remove Order">
+                              <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeOrderButton" text="Remove Order">
                                  <HBox.margin>
                                     <Insets left="5.0" />
                                  </HBox.margin>

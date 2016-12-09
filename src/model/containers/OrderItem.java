@@ -10,14 +10,14 @@ public class OrderItem implements Serializable
 	private static final long serialVersionUID = 1L;
 	private double itemId;
 	private int orderId;
-	private int quant;
+	private double quant;
 	
 	public OrderItem()
 	{
 		
 	}
 	
-	public OrderItem(double itemId, int orderId, int quant)
+	public OrderItem(double itemId, int orderId, double quant)
 	{
 		super();
 		this.itemId = itemId;
@@ -45,12 +45,12 @@ public class OrderItem implements Serializable
 		this.orderId = orderId;
 	}
 
-	public int getQuant()
+	public double getQuant()
 	{
 		return quant;
 	}
 
-	public void setQuant(int quant)
+	public void setQuant(double quant)
 	{
 		this.quant = quant;
 	}

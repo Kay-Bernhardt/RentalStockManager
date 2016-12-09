@@ -10,7 +10,7 @@ public class Item implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	private double id;
-	private int quantity;
+	private double quantity;
 	private String name;
 
 //===================== Constructor ===========================================
@@ -22,7 +22,7 @@ public class Item implements Serializable
 		this.name = "This Item does not exist";
 	}
 	
-	public Item(double id, int quantity, String name)
+	public Item(double id, double quantity, String name)
 	{
 		this.id = id;
 		this.name = name;		
@@ -51,11 +51,11 @@ public class Item implements Serializable
 		this.id = id;
 	}
 
-	public int getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 

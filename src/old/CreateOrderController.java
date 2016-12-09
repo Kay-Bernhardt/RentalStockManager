@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ResourceBundle;
 import utility.Utility;
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
 import model.containers.OrderItem;
@@ -28,6 +28,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
 
+/*
 public class CreateOrderController implements Initializable
 {
 	@FXML
@@ -257,3 +258,4 @@ public class CreateOrderController implements Initializable
 		}
 	}
 }
+*/

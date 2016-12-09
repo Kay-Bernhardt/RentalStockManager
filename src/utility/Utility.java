@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import javafx.collections.ObservableList;
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 
 public class Utility
@@ -34,10 +34,10 @@ public class Utility
 		return index;
 	}
 
-	public static int checkNumber(String str)
+	public static double checkNumber(String str)
 	{
 		System.out.println("checking number: " + str);
-		int number = 0;
+		double number = 0;
 		boolean flag = true;
 		for (int i = 0; i < str.length() && flag; i++)
 		{
@@ -51,7 +51,7 @@ public class Utility
 		{
 			if(str.contains("."))
 			{
-				number = -1;
+				number = Double.parseDouble(str);
 			}
 			else
 			{

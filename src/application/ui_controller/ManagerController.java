@@ -7,7 +7,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import model.DBBroker;
+
+import model.broker.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
 import application.Main;
@@ -40,6 +41,8 @@ public class ManagerController implements Initializable
 	private Label greetingLabel;
 	@FXML
 	private Button editButton;
+	@FXML
+	private Button removeButton;
 
 	// STOCK TABLE
 	@FXML
@@ -47,7 +50,7 @@ public class ManagerController implements Initializable
 	@FXML
 	private TableColumn<Item, Double> iID;
 	@FXML
-	private TableColumn<Item, Integer> iQuant;
+	private TableColumn<Item, Double> iQuant;
 	@FXML
 	private TableColumn<Item, String> iName;
 
@@ -63,6 +66,7 @@ public class ManagerController implements Initializable
 		datePicker.setEditable(false);
 		datePicker.setValue(Main.date);
 		editButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
+		removeButton.disableProperty().bind(orderListView.getSelectionModel().selectedItemProperty().isNull());
 		showStock();
 		showOrders();
 		orderListView.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -88,11 +92,32 @@ public class ManagerController implements Initializable
 		ArrayList<Item> list = DBBroker.getInstance().getStockForDate(Main.date);
 		tableList.setAll(list);
 
-		iID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
-		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
 		iName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-
+		iID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
 		iID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see
+				// DoubleStringConverter if needed
+				return null;
+			}
+		}));
+		iQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		iQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
 		{
 			private final NumberFormat nf = DecimalFormat.getNumberInstance();
 			{
@@ -197,5 +222,11 @@ public class ManagerController implements Initializable
 	private void updateDB(ActionEvent event)
 	{
 		DBBroker.getInstance().updateDB();
+	}
+	
+	@FXML
+	private void updateItem(ActionEvent event)
+	{
+		DBBroker.getInstance().updateItem();
 	}
 }

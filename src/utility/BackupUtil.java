@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import application.ui_controller.ScreenNavigator;
 import javafx.fxml.FXML;
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
 import model.containers.OrderItem;

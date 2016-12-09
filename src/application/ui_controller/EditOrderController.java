@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ResourceBundle;
 import utility.Utility;
-import model.DBBroker;
+import model.broker.DBBroker;
 import model.containers.Item;
 import model.containers.Order;
 import model.containers.OrderItem;
@@ -55,7 +55,7 @@ public class EditOrderController implements Initializable
 	@FXML
 	private TableColumn<Item, Double> stID;
 	@FXML
-	private TableColumn<Item, Integer> stQuant;
+	private TableColumn<Item, Double> stQuant;
 	@FXML
 	private TableColumn<Item, String> stName;
 
@@ -65,7 +65,7 @@ public class EditOrderController implements Initializable
 	@FXML
 	private TableColumn<Item, Double> oID;
 	@FXML
-	private TableColumn<Item, Integer> oQuant;
+	private TableColumn<Item, Double> oQuant;
 	@FXML
 	private TableColumn<Item, String> oName;
 
@@ -120,7 +120,6 @@ public class EditOrderController implements Initializable
 
 		stockTableList.setAll(DBBroker.getInstance().getStockForDate(Main.date));
 
-		stQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
 		stName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
 		stID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
 		stID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
@@ -144,13 +143,56 @@ public class EditOrderController implements Initializable
 				return null;
 			}
 		}));
+		stQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		stQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see DoubleStringConverter if needed
+				return null;
+			}
+		}));
 
 		iStockTable.setItems(stockTableList);
 
-		oQuant.setCellValueFactory(new PropertyValueFactory<Item, Integer>("quantity"));
 		oName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
 		oID.setCellValueFactory(new PropertyValueFactory<Item, Double>("id"));
 		oID.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
+		{
+			private final NumberFormat nf = DecimalFormat.getNumberInstance();
+			{
+				nf.setMaximumFractionDigits(1);
+				nf.setMinimumFractionDigits(0);
+			}
+
+			@Override
+			public String toString(final Double value)
+			{
+				return nf.format(value);
+			}
+
+			@Override
+			public Double fromString(final String s)
+			{
+				// Don't need this, unless table is editable, see DoubleStringConverter if needed
+				return null;
+			}
+		}));
+		oQuant.setCellValueFactory(new PropertyValueFactory<Item, Double>("quantity"));
+		oQuant.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>()
 		{
 			private final NumberFormat nf = DecimalFormat.getNumberInstance();
 			{
@@ -233,7 +275,7 @@ public class EditOrderController implements Initializable
 																			// why no use this?
 		if (index != -1 && item.getQuantity() != 0)
 		{
-			int newQuant = (stockTableList.get(index).getQuantity()) - (item.getQuantity());
+			double newQuant = (stockTableList.get(index).getQuantity()) - (item.getQuantity());
 			if (newQuant > -1)
 			{
 				stockTableList.get(index).setQuantity(newQuant);
