@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import javafx.application.Platform;
 import model.SqlProcedure;
 import model.containers.Item;
 import model.containers.Order;
@@ -14,7 +16,7 @@ public class DBBroker
 {
 	private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 	private String dbName = "RSM";
-	private String connectionURL = "jdbc:derby:" + dbName + ";create=false";
+	private String connectionURL = "jdbc:derby:" + dbName + ";create=true";
 
 	private Connection conn = null;
 	private static DBBroker instance = null;
@@ -35,6 +37,8 @@ public class DBBroker
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
+			Platform.exit();
+			System.exit(1);
 		}
 	}
 

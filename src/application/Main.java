@@ -39,9 +39,7 @@ public class Main extends Application
 				@Override
 				public void handle(WindowEvent t)
 				{
-					DBBroker.getInstance().close();
-					Platform.exit();
-					System.exit(0);
+					close();
 				}
 			});
 			stage.show();
@@ -83,8 +81,7 @@ public class Main extends Application
 	private Scene createScene(Pane mainPane)
 	{
 		Scene scene = new Scene(mainPane);
-		scene.getStylesheets().add(this.getClass().getResource("style/application.css").toExternalForm());
-		// scene.getStylesheets().setAll(getClass().getResource("vista.css").toExternalForm());
+		//scene.getStylesheets().add(this.getClass().getResource("style/application.css").toExternalForm());
 
 		return scene;
 	}
@@ -119,4 +116,11 @@ public class Main extends Application
       String parentPath = new File(jarPath).getParentFile().getPath();
       return parentPath;
    }
+	
+	public static void close()
+	{
+		DBBroker.getInstance().close();
+		Platform.exit();
+		System.exit(0);
+	}
 }
